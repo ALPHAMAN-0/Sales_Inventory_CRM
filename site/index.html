@@ -1,0 +1,500 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Sales, Inventory &amp; CRM — Full-stack Laravel + React</title>
+    <meta
+      name="description"
+      content="A full-stack Sales, Inventory & CRM system: a Laravel REST API and a React (TypeScript) SPA with concurrency-safe inventory, lost-customer recovery, and employee KPI tracking."
+    />
+    <!-- Repo link is set once, below. Replace YOUR-USERNAME with your GitHub handle. -->
+    <style>
+      :root {
+        --bg: #0b1020;
+        --bg-soft: #121a30;
+        --card: #151d33;
+        --border: #253052;
+        --text: #e6ebf5;
+        --muted: #9aa7c2;
+        --brand: #6366f1;
+        --brand-2: #8b5cf6;
+        --accent: #22d3ee;
+        --green: #34d399;
+        --radius: 14px;
+        --maxw: 1120px;
+      }
+      * { box-sizing: border-box; }
+      html { scroll-behavior: smooth; }
+      body {
+        margin: 0;
+        font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto,
+          Helvetica, Arial, sans-serif;
+        color: var(--text);
+        background: var(--bg);
+        line-height: 1.6;
+        -webkit-font-smoothing: antialiased;
+      }
+      a { color: inherit; text-decoration: none; }
+      .wrap { max-width: var(--maxw); margin: 0 auto; padding: 0 22px; }
+
+      /* ---- Header ---- */
+      header {
+        position: sticky;
+        top: 0;
+        z-index: 20;
+        backdrop-filter: blur(10px);
+        background: rgba(11, 16, 32, 0.72);
+        border-bottom: 1px solid var(--border);
+      }
+      .nav {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        height: 62px;
+      }
+      .brand { display: flex; align-items: center; gap: 10px; font-weight: 700; }
+      .logo {
+        width: 30px; height: 30px; border-radius: 8px;
+        display: grid; place-items: center; color: #fff; font-weight: 800;
+        background: linear-gradient(135deg, var(--brand), var(--brand-2));
+      }
+      .nav-links { display: flex; gap: 22px; font-size: 14px; color: var(--muted); }
+      .nav-links a:hover { color: var(--text); }
+      .btn {
+        display: inline-flex; align-items: center; gap: 8px;
+        padding: 10px 16px; border-radius: 10px; font-weight: 600; font-size: 14px;
+        border: 1px solid var(--border); transition: transform .12s ease, background .2s;
+      }
+      .btn:hover { transform: translateY(-1px); }
+      .btn-primary {
+        background: linear-gradient(135deg, var(--brand), var(--brand-2));
+        border-color: transparent; color: #fff;
+      }
+      .btn-ghost { background: var(--bg-soft); color: var(--text); }
+      @media (max-width: 720px) { .nav-links { display: none; } }
+
+      /* ---- Hero ---- */
+      .hero {
+        position: relative; overflow: hidden;
+        padding: 92px 0 64px;
+        background:
+          radial-gradient(900px 420px at 80% -10%, rgba(99, 102, 241, 0.28), transparent 60%),
+          radial-gradient(700px 380px at 0% 0%, rgba(34, 211, 238, 0.14), transparent 55%);
+      }
+      .eyebrow {
+        display: inline-flex; align-items: center; gap: 8px;
+        font-size: 12.5px; letter-spacing: .06em; text-transform: uppercase;
+        color: var(--accent); font-weight: 700;
+        border: 1px solid var(--border); background: var(--bg-soft);
+        padding: 6px 12px; border-radius: 999px; margin-bottom: 22px;
+      }
+      h1 {
+        font-size: clamp(34px, 6vw, 58px); line-height: 1.05; margin: 0 0 18px;
+        letter-spacing: -0.02em; font-weight: 800;
+      }
+      h1 .grad {
+        background: linear-gradient(120deg, #a5b4fc, #22d3ee);
+        -webkit-background-clip: text; background-clip: text; color: transparent;
+      }
+      .lede { font-size: clamp(16px, 2.2vw, 20px); color: var(--muted); max-width: 720px; margin: 0 0 28px; }
+      .cta-row { display: flex; flex-wrap: wrap; gap: 12px; margin-bottom: 26px; }
+      .badges { display: flex; flex-wrap: wrap; gap: 8px; }
+      .badge {
+        font-size: 12.5px; color: var(--muted); background: var(--bg-soft);
+        border: 1px solid var(--border); border-radius: 8px; padding: 5px 11px; font-weight: 600;
+      }
+
+      /* ---- Sections ---- */
+      section { padding: 64px 0; }
+      .section-head { max-width: 700px; margin-bottom: 40px; }
+      .kicker { color: var(--accent); font-weight: 700; font-size: 13px; letter-spacing: .06em; text-transform: uppercase; }
+      h2 { font-size: clamp(26px, 4vw, 36px); margin: 8px 0 12px; letter-spacing: -0.02em; }
+      .section-head p { color: var(--muted); margin: 0; font-size: 16.5px; }
+
+      .grid { display: grid; gap: 18px; }
+      .grid-3 { grid-template-columns: repeat(3, 1fr); }
+      .grid-2 { grid-template-columns: repeat(2, 1fr); }
+      @media (max-width: 900px) { .grid-3 { grid-template-columns: 1fr; } .grid-2 { grid-template-columns: 1fr; } }
+
+      .card {
+        background: linear-gradient(180deg, var(--card), var(--bg-soft));
+        border: 1px solid var(--border); border-radius: var(--radius); padding: 24px;
+      }
+      .card h3 { margin: 14px 0 6px; font-size: 18px; }
+      .card p { margin: 0; color: var(--muted); font-size: 15px; }
+      .icon {
+        width: 42px; height: 42px; border-radius: 11px; display: grid; place-items: center;
+        background: rgba(99, 102, 241, 0.14); border: 1px solid var(--border); color: #a5b4fc;
+      }
+      .icon svg { width: 22px; height: 22px; }
+
+      ul.check { list-style: none; padding: 0; margin: 14px 0 0; }
+      ul.check li { position: relative; padding-left: 26px; margin: 9px 0; color: var(--muted); font-size: 15px; }
+      ul.check li::before {
+        content: ""; position: absolute; left: 0; top: 8px; width: 14px; height: 14px;
+        border-radius: 50%; background: rgba(52, 211, 153, .16);
+        box-shadow: inset 0 0 0 2px var(--green);
+      }
+      ul.check li strong { color: var(--text); font-weight: 600; }
+
+      /* ---- Architecture highlights ---- */
+      .arch { background: var(--bg-soft); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
+      .stat-num { font-size: 30px; font-weight: 800; color: #fff; }
+      .arch .card p .hl { color: var(--accent); font-weight: 700; }
+
+      /* ---- Code / quick start ---- */
+      pre {
+        background: #070b16; border: 1px solid var(--border); border-radius: var(--radius);
+        padding: 18px 20px; overflow-x: auto; font-size: 13.5px; line-height: 1.7;
+        font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace; color: #d8def0;
+      }
+      .cmt { color: #6b7a9c; }
+      .cmd { color: #7dd3fc; }
+
+      /* ---- Product tour (light UI previews on the dark page) ---- */
+      .tour-row { display: grid; grid-template-columns: 0.85fr 1.15fr; gap: 30px; align-items: center; margin-bottom: 34px; }
+      .tour-txt h3 { font-size: 20px; margin: 0 0 8px; }
+      .tour-txt p { color: var(--muted); margin: 0; font-size: 15.5px; }
+      @media (max-width: 900px) { .tour-row { grid-template-columns: 1fr; gap: 16px; } }
+
+      .shot {
+        background: #f8fafc; color: #0f172a; border-radius: 12px; border: 1px solid #cbd5e1;
+        overflow: hidden; box-shadow: 0 24px 60px rgba(0, 0, 0, 0.45);
+      }
+      .shot-bar { display: flex; align-items: center; gap: 7px; padding: 10px 14px; background: #eef2f7; border-bottom: 1px solid #dbe2ea; }
+      .shot-dot { width: 11px; height: 11px; border-radius: 50%; }
+      .shot-url { margin-left: 10px; font-size: 12px; color: #64748b; background: #fff; border: 1px solid #dbe2ea; border-radius: 6px; padding: 3px 12px; }
+      .shot-body { padding: 14px; }
+      .shot .panel { border: 1px solid #e2e8f0; border-radius: 8px; }
+      .shot .row { display: flex; justify-content: space-between; align-items: center; padding: 9px 11px; border-bottom: 1px solid #eef2f6; }
+      .shot .row:last-child { border-bottom: none; }
+      .shot .name { font-weight: 600; font-size: 13.5px; }
+      .shot .muted { color: #64748b; font-size: 12px; }
+      .shot .pill { font-size: 11px; font-weight: 700; padding: 2px 9px; border-radius: 999px; white-space: nowrap; }
+      .pill-lost { background: #fee2e2; color: #b91c1c; }
+      .pill-active { background: #dcfce7; color: #15803d; }
+      .pill-pending { background: #fef3c7; color: #b45309; }
+      .pill-rec { background: #ede9fe; color: #6d28d9; }
+      .shot .btn-s { display: inline-block; font-size: 12px; font-weight: 600; padding: 5px 11px; border-radius: 7px; border: 1px solid #cbd5e1; background: #fff; color: #334155; }
+      .shot .btn-p { background: #4f46e5; color: #fff; border-color: transparent; }
+      .shot table { width: 100%; border-collapse: collapse; font-size: 13px; }
+      .shot th { text-align: left; color: #64748b; font-weight: 700; font-size: 10.5px; letter-spacing: .04em; text-transform: uppercase; padding: 7px 9px; border-bottom: 1px solid #e2e8f0; }
+      .shot td { padding: 9px; border-bottom: 1px solid #f1f5f9; color: #334155; }
+      .shot tr:last-child td { border-bottom: none; }
+      .shot .r { text-align: right; }
+
+      /* ---- Footer ---- */
+      footer { border-top: 1px solid var(--border); padding: 34px 0; color: var(--muted); font-size: 14px; }
+      .foot { display: flex; flex-wrap: wrap; gap: 12px; justify-content: space-between; align-items: center; }
+      .note {
+        margin-top: 14px; font-size: 13px; color: var(--muted);
+        background: rgba(34, 211, 238, .07); border: 1px solid var(--border);
+        border-radius: 10px; padding: 10px 14px;
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <div class="wrap nav">
+        <div class="brand">
+          <span class="logo">S</span>
+          <span>Sales &amp; CRM</span>
+        </div>
+        <nav class="nav-links">
+          <a href="#features">Features</a>
+          <a href="#tour">Tour</a>
+          <a href="#architecture">Architecture</a>
+          <a href="#stack">Stack</a>
+          <a href="#run">Run it</a>
+        </nav>
+        <a class="btn btn-primary" id="repo-top" href="#" target="_blank" rel="noreferrer">GitHub ↗</a>
+      </div>
+    </header>
+
+    <!-- HERO -->
+    <div class="hero">
+      <div class="wrap">
+        <span class="eyebrow">● Full-stack technical assessment</span>
+        <h1>Sales, Inventory &amp;<br /><span class="grad">CRM Platform</span></h1>
+        <p class="lede">
+          A production-style back-office for multi-branch retail — a
+          <strong>Laravel REST API</strong> and a <strong>React&nbsp;(TypeScript) SPA</strong>
+          that record sales with concurrency-safe atomic inventory, recover lost
+          customers, and track employee KPI. Fully Dockerized.
+        </p>
+        <div class="cta-row">
+          <a class="btn btn-primary" id="repo-hero" href="#" target="_blank" rel="noreferrer">View source on GitHub</a>
+          <a class="btn btn-ghost" href="#run">Run it locally</a>
+        </div>
+        <div class="badges">
+          <span class="badge">Laravel 13</span>
+          <span class="badge">React 19 + TypeScript</span>
+          <span class="badge">MySQL 8</span>
+          <span class="badge">Redis</span>
+          <span class="badge">Docker Compose</span>
+          <span class="badge">Sanctum · Pest</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- FEATURES -->
+    <section id="features">
+      <div class="wrap">
+        <div class="section-head">
+          <span class="kicker">What it does</span>
+          <h2>Everything a retail back-office needs</h2>
+          <p>Three domains, cleanly separated: point-of-sale &amp; inventory, customer lifecycle &amp; recovery, and a secure integration API.</p>
+        </div>
+        <div class="grid grid-3">
+          <div class="card">
+            <div class="icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 3h1.4c.5 0 .95.34 1.08.83L5.1 5.3M7.5 14.25a3 3 0 00-3 3h15.75m-12.75-3h11.2c1.12-2.3 2.1-4.68 2.93-7.14a60 60 0 00-16.54-1.84M7.5 14.25L5.1 5.3M6 20.25a.75.75 0 11-1.5 0 .75.75 0 011.5 0zm12.75 0a.75.75 0 11-1.5 0 .75.75 0 011.5 0z"/></svg>
+            </div>
+            <h3>Sales &amp; Inventory</h3>
+            <ul class="check">
+              <li>Product catalog — SKU, price, <strong>per-branch stock</strong></li>
+              <li>Point of sale with automatic stock deduction</li>
+              <li><strong>Overselling is impossible</strong> — atomic transactions, row locks &amp; a DB CHECK</li>
+              <li>Race-safe invoice numbering + PDF invoices</li>
+            </ul>
+          </div>
+          <div class="card">
+            <div class="icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19.1a9.4 9.4 0 006.7-.58 4.1 4.1 0 00-7.53-2.5M15 19.1v.1A12.3 12.3 0 018.6 21c-2.3 0-4.5-.64-6.37-1.77M15 19.1a6.4 6.4 0 00-.79-3.07M2.24 19.13A6.38 6.38 0 0114.2 16.06M12 6.38a3.38 3.38 0 11-6.75 0 3.38 3.38 0 016.75 0zm8.25 2.25a2.63 2.63 0 11-5.25 0 2.63 2.63 0 015.25 0z"/></svg>
+            </div>
+            <h3>Customer CRM</h3>
+            <ul class="check">
+              <li>Purchase history — frequency &amp; last-purchase</li>
+              <li><strong>Lost-customer detection</strong> (configurable threshold)</li>
+              <li>Assign lost customers to employees (admin-only)</li>
+              <li><strong>Idempotent KPI credit</strong> when a customer is won back</li>
+              <li>Re-engagement campaigns — email + SMS</li>
+            </ul>
+          </div>
+          <div class="card">
+            <div class="icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 21v-7.5a.75.75 0 01.75-.75h3a.75.75 0 01.75.75V21m-4.5 0H3.75m9.75 0h6.75M3.75 21V9.35m0 0a48.4 48.4 0 018.13-4.6.75.75 0 01.69 0 48.4 48.4 0 018.13 4.6M3.75 9.35H1.5m18.75 0h2.25M6.75 12.75h.008v.008H6.75v-.008zm0 3h.008v.008H6.75v-.008zm3.75-3h.008v.008H10.5v-.008zm0 3h.008v.008H10.5v-.008z"/></svg>
+            </div>
+            <h3>Bonus &amp; Integration</h3>
+            <ul class="check">
+              <li><strong>Multi-branch</strong> — locations, stock &amp; sales per branch</li>
+              <li>Auto-emailed <strong>PDF invoices</strong> after each sale</li>
+              <li>Secure <strong>e-commerce product feed</strong> API</li>
+              <li>Token ability + dedicated rate limit</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- PRODUCT TOUR -->
+    <section id="tour">
+      <div class="wrap">
+        <div class="section-head">
+          <span class="kicker">See it in action</span>
+          <h2>The features, at a glance</h2>
+          <p>A quick look at the real interface — point of sale, employee KPI, and the lost-customer recovery workflow.</p>
+        </div>
+
+        <!-- POS -->
+        <div class="tour-row">
+          <div class="tour-txt">
+            <h3>Point of sale</h3>
+            <p>Pick a customer, add products, and check out. Stock is deducted atomically the moment the sale commits — out-of-stock items can't be added, and overselling is impossible.</p>
+          </div>
+          <div class="shot">
+            <div class="shot-bar">
+              <span class="shot-dot" style="background:#f87171"></span>
+              <span class="shot-dot" style="background:#fbbf24"></span>
+              <span class="shot-dot" style="background:#34d399"></span>
+              <span class="shot-url">localhost:5173/pos</span>
+            </div>
+            <div class="shot-body">
+              <div style="display:grid;grid-template-columns:1.25fr 1fr;gap:12px;">
+                <div class="panel">
+                  <div class="row"><div><div class="name">Wireless Mouse</div><div class="muted">SKU-2732-KQ · $24.90 · 57 in stock</div></div><span class="btn-s">Add</span></div>
+                  <div class="row"><div><div class="name">USB-C Cable</div><div class="muted">SKU-0633-LS · $9.50 · 12 in stock</div></div><span class="btn-s">Add</span></div>
+                  <div class="row"><div><div class="name">Mechanical Keyboard</div><div class="muted">SKU-4095-SB · $89.00 · 0 in stock</div></div><span class="btn-s" style="opacity:.45">Out</span></div>
+                </div>
+                <div>
+                  <div class="panel" style="padding:10px;margin-bottom:10px;">
+                    <div class="muted" style="text-transform:uppercase;font-weight:700;margin-bottom:6px;">Customer</div>
+                    <div style="display:flex;justify-content:space-between;align-items:center;background:#f1f5f9;border-radius:6px;padding:6px 9px;">
+                      <div><div class="name">Georgiana S.</div><div class="muted">ronny62@example.net</div></div>
+                      <span class="pill pill-lost">Lost</span>
+                    </div>
+                  </div>
+                  <div class="panel" style="padding:10px;">
+                    <div class="muted" style="text-transform:uppercase;font-weight:700;margin-bottom:4px;">Cart</div>
+                    <div class="row" style="padding:5px 0;"><span style="font-size:13px;">Wireless Mouse ×2</span><span style="font-size:13px;">$49.80</span></div>
+                    <div style="border-top:1px solid #e2e8f0;margin-top:4px;padding-top:6px;">
+                      <div style="display:flex;justify-content:space-between;font-size:12.5px;color:#64748b;"><span>Subtotal</span><span>$49.80</span></div>
+                      <div style="display:flex;justify-content:space-between;font-size:12.5px;color:#64748b;"><span>Tax (5%)</span><span>$2.49</span></div>
+                      <div style="display:flex;justify-content:space-between;font-weight:700;margin-top:2px;"><span>Total</span><span>$52.29</span></div>
+                    </div>
+                    <div class="btn-s btn-p" style="display:block;text-align:center;margin-top:8px;">Complete sale</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- KPI -->
+        <div class="tour-row">
+          <div class="tour-txt">
+            <h3>Employee KPI leaderboard</h3>
+            <p>When a lost customer assigned to an employee buys again, that employee's KPI rises automatically — credited once, idempotently, straight from the recovery ledger.</p>
+          </div>
+          <div class="shot">
+            <div class="shot-bar">
+              <span class="shot-dot" style="background:#f87171"></span>
+              <span class="shot-dot" style="background:#fbbf24"></span>
+              <span class="shot-dot" style="background:#34d399"></span>
+              <span class="shot-url">localhost:5173/kpi</span>
+            </div>
+            <div class="shot-body">
+              <table>
+                <thead><tr><th>Rank</th><th>Employee</th><th>Branch</th><th class="r">Recovered</th><th class="r">Sales</th><th class="r">KPI</th></tr></thead>
+                <tbody>
+                  <tr><td style="font-size:16px;">🥇</td><td class="name">Alice Nguyen</td><td class="muted">North Branch</td><td class="r">1</td><td class="r">6</td><td class="r" style="font-weight:800;color:#4f46e5;">10</td></tr>
+                  <tr><td style="font-size:16px;">🥈</td><td>Bob Martins</td><td class="muted">Main Store</td><td class="r">0</td><td class="r">9</td><td class="r" style="font-weight:700;">0</td></tr>
+                  <tr><td style="font-size:16px;">🥉</td><td>Carol Reyes</td><td class="muted">Online</td><td class="r">0</td><td class="r">4</td><td class="r" style="font-weight:700;">0</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- LOST CUSTOMERS -->
+        <div class="tour-row">
+          <div class="tour-txt">
+            <h3>Lost-customer recovery</h3>
+            <p>A scheduled job flags customers past the inactivity threshold. Admins assign them to employees for follow-up, or fire a bulk re-engagement campaign (email + SMS).</p>
+          </div>
+          <div class="shot">
+            <div class="shot-bar">
+              <span class="shot-dot" style="background:#f87171"></span>
+              <span class="shot-dot" style="background:#fbbf24"></span>
+              <span class="shot-dot" style="background:#34d399"></span>
+              <span class="shot-url">localhost:5173/crm/lost</span>
+            </div>
+            <div class="shot-body">
+              <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
+                <div style="font-weight:700;">Lost Customers</div>
+                <span class="btn-s btn-p">Re-engage all lost</span>
+              </div>
+              <table>
+                <thead><tr><th>Name</th><th class="r">Days lost</th><th class="r">Spent</th><th>Assignment</th><th class="r">Action</th></tr></thead>
+                <tbody>
+                  <tr><td class="name">Georgiana Schroeder</td><td class="r">120</td><td class="r">$1,515</td><td>Alice Nguyen &nbsp;<span class="pill pill-pending">Pending</span></td><td class="r"><span class="btn-s" style="opacity:.55;">Assigned</span></td></tr>
+                  <tr><td>Kennedi Jacobs</td><td class="r">142</td><td class="r">$2,611</td><td class="muted">Unassigned</td><td class="r"><span class="btn-s">Assign</span></td></tr>
+                  <tr><td>Enoch Leannon</td><td class="r">98</td><td class="r">$2,303</td><td class="muted">Unassigned</td><td class="r"><span class="btn-s">Assign</span></td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ARCHITECTURE -->
+    <section id="architecture" class="arch">
+      <div class="wrap">
+        <div class="section-head">
+          <span class="kicker">How it's built</span>
+          <h2>Engineered for correctness</h2>
+          <p>Data-integrity operations are synchronous and transactional; side effects are asynchronous and queued after commit.</p>
+        </div>
+        <div class="grid grid-2">
+          <div class="card">
+            <h3>🔒 Overselling is provably impossible</h3>
+            <p>Each sale runs in one transaction that <span class="hl">locks every inventory row</span> (<code>SELECT … FOR UPDATE</code>, ordered to avoid deadlocks), validates all lines before mutating, and is backstopped by a database <code>CHECK (quantity ≥ 0)</code>.</p>
+          </div>
+          <div class="card">
+            <h3>📒 Ledger-backed, rebuildable counters</h3>
+            <p>Stock, KPI scores and customer aggregates are <span class="hl">caches of append-only ledgers</span> (<code>stock_movements</code>, <code>kpi_events</code>) — reconstructable at any time with a single artisan command.</p>
+          </div>
+          <div class="card">
+            <h3>⚡ Async fan-out after commit</h3>
+            <p>A committed sale dispatches <code>SaleCompleted</code> to <span class="hl">queued listeners</span> that update stats, credit recovery KPI, and email the PDF invoice — a rolled-back sale dispatches nothing.</p>
+          </div>
+          <div class="card">
+            <h3>🧪 Verified under real concurrency</h3>
+            <p>A <span class="hl">16-test Pest suite on MySQL</span> — including a flagship test that races <strong>two real OS processes</strong> for the last unit — proves exactly one sale wins and stock never goes negative.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- STACK -->
+    <section id="stack">
+      <div class="wrap">
+        <div class="section-head">
+          <span class="kicker">Technology</span>
+          <h2>The stack</h2>
+          <p>A domain-sliced modular monolith on the backend, a feature-sliced SPA on the frontend, one <code>docker compose up</code> away.</p>
+        </div>
+        <div class="grid grid-3">
+          <div class="card">
+            <h3>Backend</h3>
+            <p>Laravel 13 (PHP 8.3) · Sanctum cookie auth · spatie/permission RBAC · domain-driven Actions, Services, Events &amp; Policies · dompdf invoices.</p>
+          </div>
+          <div class="card">
+            <h3>Frontend</h3>
+            <p>React 19 + TypeScript · Vite · TanStack Query · Zustand · React Hook Form + Zod · Tailwind. Cache-invalidation drives live updates.</p>
+          </div>
+          <div class="card">
+            <h3>Infrastructure</h3>
+            <p>Docker Compose — nginx, PHP-FPM, queue worker, scheduler, MySQL 8, Redis, Mailpit (SMTP) and the Vite dev server.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- RUN -->
+    <section id="run" class="arch">
+      <div class="wrap">
+        <div class="section-head">
+          <span class="kicker">Try it</span>
+          <h2>Run the full app locally</h2>
+          <p>The live application is a Dockerized API + SPA. Clone the repo and bring the whole stack up in three commands.</p>
+        </div>
+        <pre><span class="cmt"># 1 · create the env files the containers read</span>
+<span class="cmd">cp</span> .env.example .env
+<span class="cmd">cp</span> backend/.env.example backend/.env
+<span class="cmd">cp</span> frontend/.env.example frontend/.env
+
+<span class="cmt"># 2 · build &amp; start everything (installs deps, generates APP_KEY)</span>
+<span class="cmd">docker compose up</span> -d --build
+
+<span class="cmt"># 3 · create the schema and load realistic sample data</span>
+<span class="cmd">docker compose exec</span> app php artisan migrate --seed
+
+<span class="cmt"># then open:  SPA http://localhost:5173  ·  API http://localhost:8000  ·  Mail http://localhost:8025</span>
+<span class="cmt"># sign in:    admin@salescrm.test  /  password</span></pre>
+        <div class="note">
+          This page is a static showcase deployed to GitHub Pages. The application
+          itself requires Docker (PHP, MySQL, Redis) and runs locally as shown above.
+        </div>
+      </div>
+    </section>
+
+    <footer>
+      <div class="wrap foot">
+        <span>Sales, Inventory &amp; CRM — full-stack Laravel + React.</span>
+        <a id="repo-foot" href="#" target="_blank" rel="noreferrer">Source on GitHub ↗</a>
+      </div>
+    </footer>
+
+    <script>
+      // Single place to set the repository URL — replace YOUR-USERNAME.
+      var REPO_URL = "https://github.com/YOUR-USERNAME/sales-inventory-crm";
+      ["repo-top", "repo-hero", "repo-foot"].forEach(function (id) {
+        var el = document.getElementById(id);
+        if (el) el.href = REPO_URL;
+      });
+    </script>
+  </body>
+</html>

@@ -1,0 +1,55 @@
+import type { ReactNode } from 'react';
+import { cn } from '@/lib/cn';
+
+export function Card({
+  className,
+  children,
+}: {
+  className?: string;
+  children: ReactNode;
+}) {
+  return (
+    <div
+      className={cn(
+        'rounded-lg border border-slate-200 bg-white shadow-sm',
+        className,
+      )}
+    >
+      {children}
+    </div>
+  );
+}
+
+export function CardBody({
+  className,
+  children,
+}: {
+  className?: string;
+  children: ReactNode;
+}) {
+  return <div className={cn('p-4', className)}>{children}</div>;
+}
+
+export function Stat({
+  label,
+  value,
+  hint,
+}: {
+  label: string;
+  value: ReactNode;
+  hint?: string;
+}) {
+  return (
+    <Card>
+      <CardBody>
+        <p className="text-xs font-medium uppercase tracking-wide text-slate-500">
+          {label}
+        </p>
+        <p className="mt-1 text-2xl font-semibold text-slate-900 tabular">
+          {value}
+        </p>
+        {hint && <p className="mt-0.5 text-xs text-slate-400">{hint}</p>}
+      </CardBody>
+    </Card>
+  );
+}
