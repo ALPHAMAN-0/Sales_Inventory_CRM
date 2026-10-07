@@ -34,7 +34,17 @@ class SaleController extends Controller
     public function store(StoreSaleRequest $request): JsonResponse
     {
         $validated = $request->validated();
-        $employeeId = $validated['employee_id'] ?? $request->user()->employee?->id;
+        $user = $request->user();
+        $ownEmployeeId = $user->employee?->id;
+        $employeeId = $validated['employee_id'] ?? $ownEmployeeId;
+
+        // Only an admin may attribute a sale to another employee; everyone
+        // else records under their own profile.
+        abort_if(
+            $employeeId && (int) $employeeId !== $ownEmployeeId && ! $user->hasRole('admin'),
+            403,
+            'You can only record sales under your own employee profile.',
+        );
 
         if (! $employeeId) {
             throw ValidationException::withMessages([

@@ -16,11 +16,17 @@ Route::prefix('v1')->group(function () {
     // ---- Public ----
     Route::post('login', [AuthController::class, 'login']);
 
-    // ---- Authenticated SPA (Sanctum session cookie) ----
+    // ---- Any authenticated principal ----
     Route::middleware(['auth:sanctum', 'throttle:api'])->group(function () {
         Route::post('logout', [AuthController::class, 'logout']);
         Route::get('user', [AuthController::class, 'me']);
+    });
 
+    // ---- Authenticated SPA (Sanctum session cookie) — staff only ----
+    // auth:sanctum also accepts personal access tokens, so the role gate is what
+    // keeps a role-less token client (e.g. the store:read feed integration) away
+    // from customers, sales, invoices and KPI data.
+    Route::middleware(['auth:sanctum', 'throttle:api', 'role:admin|employee'])->group(function () {
         // Reference data
         Route::get('branches', [BranchController::class, 'index']);
 
