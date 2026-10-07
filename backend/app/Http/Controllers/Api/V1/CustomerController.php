@@ -17,7 +17,7 @@ class CustomerController extends Controller
             ->when($request->filled('status'), fn ($q) => $q->where('status', $request->string('status')))
             ->when($request->filled('search'), fn ($q) => $q->where('name', 'like', '%'.$request->string('search').'%'))
             ->orderBy('name')
-            ->paginate((int) $request->integer('per_page', 20));
+            ->paginate($this->perPage($request));
 
         return CustomerResource::collection($customers);
     }

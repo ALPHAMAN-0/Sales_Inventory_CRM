@@ -14,6 +14,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\ServiceProvider;
+use Illuminate\Support\Str;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -43,5 +44,16 @@ class AppServiceProvider extends ServiceProvider
         // Dedicated, tighter limiter for the third-party e-commerce feed.
         RateLimiter::for('store', fn (Request $request) => Limit::perMinute(60)
             ->by($request->user()?->id ?: $request->ip()));
+
+        // Login brute-force guard: a few tries per email+IP, plus a per-IP cap
+        // so one client can't spray a common password across many accounts.
+        RateLimiter::for('login', function (Request $request) {
+            $email = $request->input('email');
+
+            return [
+                Limit::perMinute(5)->by('email|'.(is_string($email) ? Str::lower($email) : '').'|'.$request->ip()),
+                Limit::perMinute(20)->by('ip|'.$request->ip()),
+            ];
+        });
     }
 }

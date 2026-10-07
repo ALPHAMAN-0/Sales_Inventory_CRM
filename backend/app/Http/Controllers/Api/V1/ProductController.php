@@ -21,7 +21,7 @@ class ProductController extends Controller
             ->when($request->boolean('active_only'), fn ($q) => $q->where('is_active', true))
             ->when($request->filled('search'), fn ($q) => $q->where('name', 'like', '%'.$request->string('search').'%'))
             ->orderBy('name')
-            ->paginate((int) $request->integer('per_page', 20));
+            ->paginate($this->perPage($request));
 
         return ProductResource::collection($products);
     }

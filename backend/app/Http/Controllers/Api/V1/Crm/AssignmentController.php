@@ -24,7 +24,7 @@ class AssignmentController extends Controller
             ->when($request->filled('status'), fn ($q) => $q->where('status', $request->string('status')))
             ->when($request->filled('employee_id'), fn ($q) => $q->where('employee_id', $request->integer('employee_id')))
             ->latest('assigned_at')
-            ->paginate((int) $request->integer('per_page', 20));
+            ->paginate($this->perPage($request));
 
         return AssignmentResource::collection($assignments);
     }

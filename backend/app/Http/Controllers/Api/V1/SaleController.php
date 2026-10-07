@@ -26,7 +26,7 @@ class SaleController extends Controller
             ->when($request->filled('customer_id'), fn ($q) => $q->where('customer_id', $request->integer('customer_id')))
             ->when($request->filled('branch_id'), fn ($q) => $q->where('branch_id', $request->integer('branch_id')))
             ->latest('sold_at')
-            ->paginate((int) $request->integer('per_page', 20));
+            ->paginate($this->perPage($request));
 
         return SaleResource::collection($sales);
     }

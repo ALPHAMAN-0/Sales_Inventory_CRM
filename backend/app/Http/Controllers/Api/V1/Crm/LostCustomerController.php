@@ -17,7 +17,7 @@ class LostCustomerController extends Controller
             ->where('status', CustomerStatus::Lost->value)
             ->with(['assignments.employee'])
             ->orderBy('last_purchase_at')
-            ->paginate((int) $request->integer('per_page', 20));
+            ->paginate($this->perPage($request));
 
         return LostCustomerResource::collection($customers);
     }
