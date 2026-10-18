@@ -6,12 +6,18 @@ Laravel (PHP) JSON API and a React + TypeScript SPA, running entirely on Docker.
 ## Architecture / How it Works
 
 ```mermaid
-flowchart LR
-    A[User] --> B[Sales Inventory Crm]
-    B --> C{Logic}
-    C --> D[(Data)]
-    C --> E[Output]
-    D --> C
+flowchart TD
+    React_SPA --> Laravel_API
+    Laravel_API --> Domain_Layer
+    Domain_Layer --> MySQL_Database
+    Laravel_API --> Queue_Worker
+    Queue_Worker --> Mailpit_SMTP
+    Laravel_API --> Redis_Cache
+    Docker_Compose --> React_SPA
+    Docker_Compose --> Laravel_API
+    Docker_Compose --> MySQL_Database
+    Docker_Compose --> Redis_Cache
+    Docker_Compose --> Mailpit_SMTP
 ```
 
 
