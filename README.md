@@ -3,6 +3,18 @@
 A full-stack Sales, Inventory & CRM system built as a **modular monolith**: a
 Laravel (PHP) JSON API and a React + TypeScript SPA, running entirely on Docker.
 
+## Architecture / How it Works
+
+```mermaid
+flowchart LR
+    A[User] --> B[Sales Inventory Crm]
+    B --> C{Logic}
+    C --> D[(Data)]
+    C --> E[Output]
+    D --> C
+```
+
+
 It manages a product catalog and per-branch stock, records sales with **atomic
 inventory deduction that makes overselling impossible under concurrency**,
 maintains per-customer purchase history, detects lost customers, assigns them to
